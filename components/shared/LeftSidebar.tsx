@@ -5,11 +5,12 @@ import React from "react";
 import { sidebarLinks } from "@/constants";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { SignedIn, useClerk } from "@clerk/nextjs";
+import { SignedIn, useClerk, useAuth } from "@clerk/nextjs";
 
 const LeftSidebar = () => {
   const pathname = usePathname();
   const { signOut } = useClerk();
+  const { userId } = useAuth();
 
   const handleSignOut = () => {
     signOut().then(() => {
@@ -24,6 +25,8 @@ const LeftSidebar = () => {
           const isactive =
             (pathname.includes(link.route) && link.route.length > 1) ||
             pathname == link.route;
+
+          if (link.route === "/profile") link.route = `${link.route}/${userId}`;
           return (
             <Link
               href={link.route}
@@ -43,19 +46,17 @@ const LeftSidebar = () => {
         })}
       </div>
 
-      <div className="mt-5 px-6">
+      <div className="mt-10 px-6" onClick={handleSignOut}>
         <SignedIn>
-          <div
-            className="flex cursor-pointer gap-4 p-4"
-            onClick={handleSignOut}
-          >
+          <div className="flex cursor-pointer gap-4 p-4">
             <Image
               src="/assets/logout.svg"
               alt="logout"
               width={24}
               height={24}
             />
-            <p className="text-light-2 max-lg:hidden cap">Logout</p>
+
+            <p className="text-light-2 max-lg:hidden">Logout</p>
           </div>
         </SignedIn>
       </div>
