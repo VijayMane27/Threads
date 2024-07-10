@@ -3,7 +3,7 @@ import ThreadCard from "@/components/cards/ThreadCard";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { fetchThreadById } from "@/lib/actions/thread.action";
+import { fetchThreadById } from "@/lib/actions/thread.actions";
 import Comment from "@/components/forms/Comment";
 
 const page = async ({ params }: { params: { id: string } }) => {
