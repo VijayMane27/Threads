@@ -1,12 +1,26 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import User from "../models/user.model";
-import { connectToDB } from "../mongooes";
-import Thread from "../models/thread.model";
 import { FilterQuery, SortOrder } from "mongoose";
-import { skip } from "node:test";
-import { currentUser } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
+
+import Community from "../models/community.model";
+import Thread from "../models/thread.model";
+import User from "../models/user.model";
+
+import { connectToDB } from "../mongooes";
+
+export async function fetchUser(userId: string) {
+  try {
+    connectToDB();
+
+    return await User.findOne({ id: userId }).populate({
+      path: "communities",
+      model: Community,
+    });
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user: ${error.message}`);
+  }
+}
 
 interface Params {
   userId: string;
@@ -48,44 +62,39 @@ export async function updateUser({
   }
 }
 
-export async function fetchUser(userId: string) {
-  try {
-    connectToDB();
-
-    return await User.findOne({ id: userId });
-    // .populate({
-    //   path:'communities',
-    //   model: Community
-    // })
-  } catch (error: any) {
-    throw new Error(`failed to fetch user"${error.message}`);
-  }
-}
-
 export async function fetchUserPosts(userId: string) {
   try {
     connectToDB();
 
-    const Threads = await User.findOne({ id: userId }).populate({
+    // Find all threads authored by the user with the given userId
+    const threads = await User.findOne({ id: userId }).populate({
       path: "threads",
       model: Thread,
-      populate: {
-        path: "children",
-        model: Thread,
-        populate: {
-          path: "author",
-          model: User,
-          select: "name image id",
+      populate: [
+        {
+          path: "community",
+          model: Community,
+          select: "name id image _id", // Select the "name" and "_id" fields from the "Community" model
         },
-      },
+        {
+          path: "children",
+          model: Thread,
+          populate: {
+            path: "author",
+            model: User,
+            select: "name image id", // Select the "name" and "_id" fields from the "User" model
+          },
+        },
+      ],
     });
-
-    return Threads;
-  } catch (error: any) {
-    throw new Error(`Failed to fetch user posts: ${error.message}`);
+    return threads;
+  } catch (error) {
+    console.error("Error fetching user threads:", error);
+    throw error;
   }
 }
 
+// Almost similar to Thead (search + pagination) and Community (search + pagination)
 export async function fetchUsers({
   userId,
   searchString = "",

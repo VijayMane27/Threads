@@ -1,10 +1,13 @@
 import ThreadCard from "@/components/cards/ThreadCard";
 import { fetchPosts } from "@/lib/actions/thread.actions";
 import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 export default async function home() {
   const result = await fetchPosts(1, 30);
   const user = await currentUser();
+
+  if (!user) redirect("/sign-in");
 
   return (
     <>
@@ -27,7 +30,7 @@ export default async function home() {
                 content={post.text}
                 author={post.author}
                 community={post.community}
-                createdAt={post.createdAt}
+                createdAt={post.created_at}
                 comments={post.children}
               />
             ))}
