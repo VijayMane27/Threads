@@ -64,25 +64,6 @@ const SpringModal = ({
     }
   };
 
-  const isCommentInstagramPage = () => {
-    switch (true) {
-      case pathname.includes("/thread/"):
-        return `https://www.instagram.com/direct/inbox/message=${pathname}`;
-        break;
-      case pathname.includes("/profile"):
-        const userId = pathname.split("/profile/")[1];
-        const base = pathname.split(`/profile/${userId}`)[0];
-        const newUrl = `https://www.instagram.com/direct/inbox/message=${base}/thread/${href}`;
-        return newUrl;
-        break;
-      case pathname.includes("/"):
-        return `https://www.instagram.com/direct/inbox/message=${pathname}thread/${href}`;
-        break;
-      default:
-        return "error";
-    }
-  };
-
   const CopySnackbar = ({ open }: { open: any }) => {
     return (
       <div
@@ -163,15 +144,6 @@ const SpringModal = ({
                 Share With Friends, Family, Colleagues😉
               </h3>
               <div className="flex flex-row items-center gap-7 justify-center mt-5">
-                <a target="blank" href={isCommentInstagramPage()}>
-                  <Image
-                    src="/assets/instagram.svg"
-                    alt="Instagram"
-                    width={30}
-                    height={30}
-                    className="cursor-pointer object-contain"
-                  />
-                </a>
                 <a target="blank" href={isCommentWhatsappPage()}>
                   <Image
                     src="/assets/whatsapp.svg"
