@@ -67,16 +67,16 @@ const SpringModal = ({
   const isCommentInstagramPage = () => {
     switch (true) {
       case pathname.includes("/thread/"):
-        return `https://www.instagram.com/?url=${pathname}`;
+        return `https://www.instagram.com/?intent=${pathname}`;
         break;
       case pathname.includes("/profile"):
         const userId = pathname.split("/profile/")[1];
         const base = pathname.split(`/profile/${userId}`)[0];
-        const newUrl = `https://www.instagram.com/?url=${base}/thread/${href}`;
+        const newUrl = `https://www.instagram.com/?intent=${base}/thread/${href}`;
         return newUrl;
         break;
       case pathname.includes("/"):
-        return `https://www.instagram.com/?url=${pathname}thread/${href}`;
+        return `https://www.instagram.com/?intent=${pathname}thread/${href}`;
         break;
       default:
         return "error";
@@ -163,7 +163,7 @@ const SpringModal = ({
                 Share With Friends, Family, Colleagues😉
               </h3>
               <div className="flex flex-row items-center gap-7 justify-center mt-5">
-                <a href={isCommentInstagramPage()}>
+                <a target="blank" href={isCommentInstagramPage()}>
                   <Image
                     src="/assets/instagram.svg"
                     alt="Instagram"
