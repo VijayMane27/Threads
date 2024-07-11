@@ -89,6 +89,7 @@ function ThreadCard({
                     className="cursor-pointer object-contain"
                   />
                 </Link>
+
                 <Image
                   src="/assets/repost.svg"
                   alt="heart"
@@ -97,10 +98,16 @@ function ThreadCard({
                   className="cursor-pointer object-contain"
                 />
 
-                <CopyModalButton
-                  linkName={id.toString()}
-                  userImg={author.image}
-                />
+                {isComment ? (
+                  <div></div>
+                ) : (
+                  <div>
+                    <CopyModalButton
+                      linkName={id.toString()}
+                      userImg={author.image}
+                    />
+                  </div>
+                )}
               </div>
 
               {isComment && comments.length > 0 && (
