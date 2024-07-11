@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { usePathname } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react"; // Import useState
 
 import {
   Form,
@@ -28,6 +29,7 @@ interface Props {
 
 function Comment({ threadId, currentUserImg, currentUserId }: Props) {
   const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(false); // State for loading status
 
   const form = useForm<z.infer<typeof CommentValidation>>({
     resolver: zodResolver(CommentValidation),
@@ -37,14 +39,20 @@ function Comment({ threadId, currentUserImg, currentUserId }: Props) {
   });
 
   const onSubmit = async (values: z.infer<typeof CommentValidation>) => {
-    await addCommentToThread(
-      threadId,
-      values.thread,
-      JSON.parse(currentUserId),
-      pathname
-    );
-
-    form.reset();
+    setIsLoading(true); // Start loading
+    try {
+      await addCommentToThread(
+        threadId,
+        values.thread,
+        JSON.parse(currentUserId),
+        pathname
+      );
+      form.reset();
+    } catch (error) {
+      console.log("error in the comment");
+    } finally {
+      setIsLoading(false); // Stop loading
+    }
   };
 
   return (
@@ -76,8 +84,31 @@ function Comment({ threadId, currentUserImg, currentUserId }: Props) {
           )}
         />
 
-        <Button type="submit" className="comment-form_btn">
-          Reply
+        <Button type="submit" className="comment-form_btn" disabled={isLoading}>
+          {isLoading ? (
+            <svg
+              className="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              ></path>
+            </svg>
+          ) : (
+            "Reply"
+          )}
         </Button>
       </form>
     </Form>

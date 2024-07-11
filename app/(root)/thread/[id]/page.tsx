@@ -26,7 +26,7 @@ const page = async ({ params }: { params: { id: string } }) => {
           content={thread.text}
           author={thread.author}
           community={thread.community}
-          createdAt={thread.createdAt}
+          createdAt={thread.created_at}
           comments={thread.children}
         />
       </div>

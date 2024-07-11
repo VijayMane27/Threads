@@ -4,6 +4,8 @@ import Link from "next/link";
 import { formatDateString } from "@/lib/utils";
 import DeleteThread from "../forms/DeleteThread";
 
+import CopyModalButton from "../shared/ClickboardCopy";
+
 interface Props {
   id: string;
   currentUserId: string;
@@ -81,7 +83,7 @@ function ThreadCard({
                 <Link href={`/thread/${id}`}>
                   <Image
                     src="/assets/reply.svg"
-                    alt="heart"
+                    alt="reply-message"
                     width={24}
                     height={24}
                     className="cursor-pointer object-contain"
@@ -94,12 +96,10 @@ function ThreadCard({
                   height={24}
                   className="cursor-pointer object-contain"
                 />
-                <Image
-                  src="/assets/share.svg"
-                  alt="heart"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
+
+                <CopyModalButton
+                  linkName={id.toString()}
+                  userImg={author.image}
                 />
               </div>
 

@@ -42,6 +42,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
   const { startUpload } = useUploadThing("media");
 
   const [files, setFiles] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState(false); // State for loading status
 
   const form = useForm<z.infer<typeof UserValidation>>({
     resolver: zodResolver(UserValidation),
@@ -54,6 +55,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
   });
 
   const onSubmit = async (values: z.infer<typeof UserValidation>) => {
+    setIsLoading(true); // Start loading
     const blob = values.profile_photo;
 
     const hasImageChanged = isBase64Image(blob);
@@ -73,6 +75,8 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       bio: values.bio,
       image: values.profile_photo,
     });
+
+    setIsLoading(false); // Stop loading
 
     if (pathname === "/profile/edit") {
       router.back();
@@ -206,8 +210,31 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="bg-primary-500">
-          Submit
+        <Button type="submit" className="bg-primary-500" disabled={isLoading}>
+          {isLoading ? (
+            <svg
+              className="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              ></path>
+            </svg>
+          ) : (
+            btnTitle
+          )}
         </Button>
       </form>
     </Form>
