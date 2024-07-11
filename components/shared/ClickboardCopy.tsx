@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 
 const CopyModalButton = ({
   userImg,
@@ -45,7 +44,102 @@ const SpringModal = ({
 }) => {
   const pathname = window.location.href;
 
-  console.log("Pathanem", pathname);
+  const isCommentWhatsappPage = () => {
+    switch (true) {
+      case pathname.includes("/thread/"):
+        return `https://wa.me/?text=${pathname}`;
+        break;
+      case pathname.includes("/profile"):
+        const userId = pathname.split("/profile/")[1];
+        const base = pathname.split(`/profile/${userId}`)[0];
+        const newUrl = `https://wa.me/?text=${base}/thread/${href}`;
+
+        return newUrl;
+        break;
+      case pathname.includes("/"):
+        return `https://wa.me/?text=${pathname}thread/${href}`;
+        break;
+      default:
+        return "error";
+    }
+  };
+
+  const isCommentInstagramPage = () => {
+    switch (true) {
+      case pathname.includes("/thread/"):
+        return `https://www.instagram.com/?url=${pathname}`;
+        break;
+      case pathname.includes("/profile"):
+        const userId = pathname.split("/profile/")[1];
+        const base = pathname.split(`/profile/${userId}`)[0];
+        const newUrl = `https://www.instagram.com/?url=${base}/thread/${href}`;
+        return newUrl;
+        break;
+      case pathname.includes("/"):
+        return `https://www.instagram.com/?url=${pathname}thread/${href}`;
+        break;
+      default:
+        return "error";
+    }
+  };
+
+  const CopySnackbar = ({ open }: { open: any }) => {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          bottom: 20,
+          left: "50%",
+          transform: "translateX(-50%)",
+          background: "#4CAF50",
+          color: "white",
+          padding: 10,
+          borderRadius: 5,
+          display: open ? "block" : "none",
+        }}
+      >
+        URL Copied!
+      </div>
+    );
+  };
+
+  const isCommentCopyPage = () => {
+    switch (true) {
+      case pathname.includes("/thread/"):
+        return `${pathname}`;
+        break;
+      case pathname.includes("/profile"):
+        const userId = pathname.split("/profile/")[1];
+        const base = pathname.split(`/profile/${userId}`)[0];
+        const newUrl = `${base}/thread/${href}`;
+        return newUrl;
+        break;
+      case pathname.includes("/"):
+        return `${pathname}thread/${href}`;
+        break;
+      default:
+        return "error";
+    }
+  };
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const copyToClipboard = () => {
+    const urlToCopy = isCommentCopyPage();
+    navigator.clipboard
+      .writeText(urlToCopy)
+      .then(() => {
+        setSnackbarOpen(true);
+        setTimeout(() => {
+          setSnackbarOpen(false);
+        }, 3000); // Close snackbar after 3 seconds
+      })
+      .catch((error) => {
+        console.error("Failed to copy: ", error);
+        alert("Failed to copy URL.");
+      });
+  };
+
   return (
     <div>
       {isOpen && (
@@ -69,17 +163,16 @@ const SpringModal = ({
                 Share With Friends, Family, Colleagues😉
               </h3>
               <div className="flex flex-row items-center gap-7 justify-center mt-5">
-                <Image
-                  src="/assets/instagram.svg"
-                  alt="Instagram"
-                  width={30}
-                  height={30}
-                  className="cursor-pointer object-contain"
-                />
-                <a
-                  target="blank"
-                  href={`https://wa.me/?text=${pathname}thread/${href}`}
-                >
+                <a href={isCommentInstagramPage()}>
+                  <Image
+                    src="/assets/instagram.svg"
+                    alt="Instagram"
+                    width={30}
+                    height={30}
+                    className="cursor-pointer object-contain"
+                  />
+                </a>
+                <a target="blank" href={isCommentWhatsappPage()}>
                   <Image
                     src="/assets/whatsapp.svg"
                     alt="Whatsapp"
@@ -94,7 +187,9 @@ const SpringModal = ({
                   width={25}
                   height={25}
                   className="cursor-pointer object-contain"
+                  onClick={copyToClipboard}
                 />
+                <CopySnackbar open={snackbarOpen} />
               </div>
             </div>
           </div>
