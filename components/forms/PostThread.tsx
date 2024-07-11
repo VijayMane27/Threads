@@ -3,7 +3,7 @@
 import * as z from "zod";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -20,8 +20,6 @@ import { useState } from "react"; // Import useState
 import { ThreadValidation } from "@/lib/validations/thread";
 import { createThread } from "@/lib/actions/thread.actions";
 import { useOrganization } from "@clerk/nextjs";
-
-// import { updateUser } from "@/lib/actions/user.actions";
 
 interface Props {
   user: {
@@ -41,10 +39,15 @@ function PostThread({ userId }: { userId: string }) {
   const { organization } = useOrganization();
   const [isLoading, setIsLoading] = useState(false);
 
+  const searchParams = useSearchParams();
+  const contentFromQuery = decodeURIComponent(
+    searchParams.get("content") || ""
+  );
+
   const form = useForm({
     resolver: zodResolver(ThreadValidation),
     defaultValues: {
-      thread: "",
+      thread: contentFromQuery,
       accountId: userId,
     },
   });

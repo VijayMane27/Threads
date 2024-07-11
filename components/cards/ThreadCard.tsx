@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-
+// import { useRouter } from "next/router";
 import { formatDateString } from "@/lib/utils";
 import DeleteThread from "../forms/DeleteThread";
-
+import RepostButton from "../shared/RepostButton";
 import CopyModalButton from "../shared/ClickboardCopy";
 
 interface Props {
@@ -41,6 +41,7 @@ function ThreadCard({
   comments,
   isComment,
 }: Props) {
+  // const router = useRouter();
   return (
     <article
       className={`flex w-full mb-4 flex-col rounded-xl ${
@@ -90,13 +91,7 @@ function ThreadCard({
                   />
                 </Link>
 
-                <Image
-                  src="/assets/repost.svg"
-                  alt="heart"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
-                />
+                <RepostButton content={content} />
 
                 {isComment ? (
                   <div></div>

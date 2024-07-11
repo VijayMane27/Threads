@@ -67,16 +67,16 @@ const SpringModal = ({
   const isCommentInstagramPage = () => {
     switch (true) {
       case pathname.includes("/thread/"):
-        return `https://www.instagram.com/?intent=${pathname}`;
+        return `https://www.instagram.com/direct/inbox/message=${pathname}`;
         break;
       case pathname.includes("/profile"):
         const userId = pathname.split("/profile/")[1];
         const base = pathname.split(`/profile/${userId}`)[0];
-        const newUrl = `https://www.instagram.com/?intent=${base}/thread/${href}`;
+        const newUrl = `https://www.instagram.com/direct/inbox/message=${base}/thread/${href}`;
         return newUrl;
         break;
       case pathname.includes("/"):
-        return `https://www.instagram.com/?intent=${pathname}thread/${href}`;
+        return `https://www.instagram.com/direct/inbox/message=${pathname}thread/${href}`;
         break;
       default:
         return "error";
